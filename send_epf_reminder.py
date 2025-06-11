@@ -1,4 +1,4 @@
-from salary_automation import setup_environment
+from salary_automation import setup_environment, send_epf_reminder
 import smtplib
 from email.mime.text import MIMEText
 
