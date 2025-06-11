@@ -1,4 +1,5 @@
-from salary_automation import setup_environment
+from salary_automation 
+import setup_environment
 import smtplib
 from email.mime.text import MIMEText
 
