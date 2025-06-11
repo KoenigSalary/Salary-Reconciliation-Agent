@@ -90,3 +90,12 @@ if st.button("🚀 Run Reconciliation Now"):
         st.success("✅ Reconciliation completed successfully!")
     except Exception as e:
         st.error(f"❌ Reconciliation failed: {e}")
+
+if __name__ == "__main__":
+    try:
+        folder, smtp_user, smtp_pass = setup_environment()
+        send_epf_reminder(smtp_user, smtp_pass)
+        print("✅ EPF Reminder Email Sent Successfully!")
+    except Exception as e:
+        print(f"❌ Error sending EPF Reminder: {e}")
+
