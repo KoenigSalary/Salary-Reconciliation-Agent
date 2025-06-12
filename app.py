@@ -24,7 +24,7 @@ st.subheader("📧 EPF Reminder Email Preview")
 default_subject = "EPF Upload Reminder"
 default_body = """Dear Team,
 
-This is a reminder to upload EPF before end of day today.
+This is a friendly reminder to upload the EPF sheet for last month.
 
 Thanks,
 Tax Team
