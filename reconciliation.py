@@ -45,7 +45,6 @@ def perform_reconciliation(epf_df, salary_df, tds_df, bank_soa_df):
 
     return merged_df
 
-
 def save_reconciliation_report(reconciled_df, save_folder):
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     output_folder = f"SalaryReports/{today}"

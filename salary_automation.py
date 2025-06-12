@@ -1,35 +1,33 @@
-import datetime
-import logging
 import os
 from dotenv import load_dotenv
+import smtplib
+from email.mime.text import MIMEText
 
 def setup_environment():
     load_dotenv()
+    folder = os.getcwd()
     smtp_user = os.getenv("SMTP_USER")
     smtp_pass = os.getenv("SMTP_PASS")
-
     if not smtp_user or not smtp_pass:
-        raise ValueError("SMTP_USER and SMTP_PASS must be set in the .env file.")
+        raise ValueError("SMTP_USER or SMTP_PASS not set in .env")
+    return folder, smtp_user, smtp_pass
 
-    now = datetime.datetime.now()
-    current_year = now.year
-    current_month = now.month
+def send_epf_reminder(smtp_user, smtp_pass):
+    to_email = "tax@koenig-solutions.com"
+    subject = "EPF Upload Reminder"
+    body = """Dear Team,
 
-    if current_month == 1:
-        previous_month = 12
-        previous_year = current_year - 1
-    else:
-        previous_month = current_month - 1
-        previous_year = current_year
+This is a friendly reminder to upload the EPF sheet for this month.
 
-    previous_month_name = datetime.date(previous_year, previous_month, 1).strftime("%B")
-    folder_name = f"SalaryReports/{previous_month_name}_{previous_year}"
-    os.makedirs(folder_name, exist_ok=True)
+Regards,
+Tax Team
+"""
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = smtp_user
+    msg['To'] = to_email
 
-    logging.basicConfig(
-        filename=f"{folder_name}/automation.log",
-        level=logging.INFO,
-        format="%(asctime)s:%(levelname)s:%(message)s"
-    )
-
-    return folder_name, smtp_user, smtp_pass
+    with smtplib.SMTP("smtp.office365.com", 587) as server:
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+        server.send_message(msg)
