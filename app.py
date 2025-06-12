@@ -27,7 +27,8 @@ default_body = """Dear Team,
 This is a reminder to upload EPF before end of day today.
 
 Thanks,
-Finance Team"""
+Tax Team
+"""
 
 # Editable subject & body
 subject = st.text_input("Email Subject", default_subject)
