@@ -1,5 +1,7 @@
 name: Monthly Salary Reconciliation
 
+# === Triggers temporarily disabled until Monday ===
+
 on:
   schedule:
     - cron: '0 6 25 * *'  # ⏰ Runs every 25th at 12 PM IST (6 AM UTC)
