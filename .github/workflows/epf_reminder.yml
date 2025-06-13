@@ -1,4 +1,4 @@
-name: EPF Reminder Agent
+run: python send_epf_reminder.pyrun: python send_epf_reminder.pyname: EPF Reminder Agent
 
 on:
   schedule:
@@ -27,6 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-dotenv
 
-      - name: 🚀 Run EPF Reminder
-        run: python epf_reminder.py
+      - name: 🚀 Run EPF Reminder Script
+        run: python send_epf_reminder.py
+        working-directory: ./Downloads/AI-Agent/Salary-Reconciliations-Agent   
 
