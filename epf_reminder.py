@@ -61,6 +61,7 @@ def already_sent_reminder(hour):
     return False
 
 # Entry point for cron or automation
+print("🚀 EPF Reminder Script Started")
 if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
@@ -84,10 +85,11 @@ if __name__ == "__main__":
             print("🧹 Cleared reminder log for new month.")
 
     # On 24th, send reminder only if not uploaded and not already sent this hour
-    elif current_day == 24:
+    elif True:
         if os.path.exists(EPF_FLAG_PATH):
             print("✅ EPF already uploaded. Skipping reminders.")
         else:
+            print("❗ FLAG FILE NOT FOUND")
             uploaded = check_epf_uploaded()
             if not uploaded and current_hour in [9, 14, 18]:
                 if not already_sent_reminder(current_hour):
