@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import datetime
 import reconciliation
-from salary_automation import setup_environment, send_epf_reminder
+from salary_automation import setup_environment, epf_reminder
 from email.mime.text import MIMEText
 
 
@@ -35,7 +35,7 @@ subject = st.text_input("Email Subject", default_subject)
 body = st.text_area("Email Body", default_body, height=200)
 
 if st.button("Send Test Email"):
-    success = send_epf_reminder(
+    success = epf_reminder(
         smtp_user=st.secrets["SMTP_USER"],
         smtp_pass=st.secrets["SMTP_PASS"],
         body=body
@@ -95,7 +95,7 @@ if st.button("🚀 Run Reconciliation Now"):
 if __name__ == "__main__":
     try:
         folder, smtp_user, smtp_pass = setup_environment()
-        send_epf_reminder(smtp_user, smtp_pass)
+        epf_reminder(smtp_user, smtp_pass)
         print("✅ EPF Reminder Email Sent Successfully!")
     except Exception as e:
         print(f"❌ Error sending EPF Reminder: {e}")

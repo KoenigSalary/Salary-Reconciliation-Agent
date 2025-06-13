@@ -13,7 +13,7 @@ EPF_FOLDER = "epf_uploads"  # Folder where EPF sheet is uploaded
 EPF_FLAG_PATH = "epf_uploaded.flag"  # Flag file path
 
 # Email config
-def send_epf_reminder():
+def epf_reminder():
     to_email = "tax@koenig-solutions.com"
     subject = "EPF Upload Reminder"
     body = """Dear Team,
@@ -69,6 +69,6 @@ if __name__ == "__main__":
         else:
             uploaded = check_epf_uploaded()
             if not uploaded and current_hour in [9, 14, 18]:
-                send_epf_reminder()
+                epf_reminder()
             elif not uploaded:
                 print(f"⏱ Not a scheduled reminder time: {current_hour}h")

@@ -12,7 +12,7 @@ def setup_environment():
         raise ValueError("SMTP_USER or SMTP_PASS not set in .env")
     return folder, smtp_user, smtp_pass
 
-def send_epf_reminder(smtp_user, smtp_pass):
+def epf_reminder(smtp_user, smtp_pass):
     to_email = "tax@koenig-solutions.com"
     subject = "EPF Upload Reminder"
     body = """Dear Team,
