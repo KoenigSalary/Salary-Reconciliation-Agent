@@ -1,4 +1,4 @@
-run: python send_epf_reminder.pyrun: python send_epf_reminder.pyname: EPF Reminder Agent
+name: EPF Reminder Agent
 
 on:
   schedule:
