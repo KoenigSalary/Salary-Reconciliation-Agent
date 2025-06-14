@@ -3,12 +3,13 @@ import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.utils import formataddr
+from dotenv import load_dotenv
 
+# Constants
 EPF_FOLDER = "epf_uploads"
-EPF_FLAG_PATH = "epf_uploaded.flag"
 REMINDER_LOG_PATH = "epf_reminder_log.txt"
 
-# Reusable function to send EPF reminder (with optional body & subject)
+# Function to send reminder email
 def epf_reminder(smtp_user, smtp_pass, body=None, subject=None):
     to_email = "tax@koenig-solutions.com"
     body = body or """Dear Team,
@@ -36,19 +37,19 @@ Tax Team
         print(f"❌ Failed to send reminder: {e}")
         return False
 
-# Automatically mark flag if EPF file is detected
+# Detect uploaded EPF file (auto-check folder only)
 def check_epf_uploaded():
     if not os.path.exists(EPF_FOLDER):
+        print("📁 EPF folder not found.")
         return False
     for file in os.listdir(EPF_FOLDER):
         if file.lower().endswith(('.xls', '.xlsx')):
-            with open(EPF_FLAG_PATH, 'w') as f:
-                f.write("EPF uploaded")
-            print(f"📁 EPF file detected: {file} — Flag created.")
+            print(f"📄 EPF file detected: {file}")
             return True
+    print("⚠️ No EPF file found.")
     return False
 
-# Check if a reminder has already been sent for this hour today
+# Prevent duplicate reminders in same hour
 def already_sent_reminder(hour):
     today = datetime.now().strftime("%Y-%m-%d")
     log_entry = f"{today}-{hour}"
@@ -60,10 +61,9 @@ def already_sent_reminder(hour):
         f.write(log_entry + "\n")
     return False
 
-# Entry point for cron or automation
+# Entry point
 print("🚀 EPF Reminder Script Started")
 if __name__ == "__main__":
-    from dotenv import load_dotenv
     load_dotenv()
     SMTP_USER = os.getenv("SMTP_USER")
     SMTP_PASS = os.getenv("SMTP_PASS")
@@ -75,26 +75,27 @@ if __name__ == "__main__":
     current_day = now.day
     current_hour = now.hour
 
-    # Reset flag and log on 1st at midnight
+    # ✅ Allow execution only on 1st at midnight or on 24th
+    if not (current_day == 24 or (current_day == 1 and current_hour == 0)):
+        print(f"⛔ Today is {current_day}, {current_hour}:00. Not the scheduled time. Exiting.")
+        exit()
+
+    # 🧹 Monthly Reset on 1st at 00:00
     if current_day == 1 and current_hour == 0:
-        if os.path.exists(EPF_FLAG_PATH):
-            os.remove(EPF_FLAG_PATH)
-            print("🧹 Reset EPF flag for the new month.")
         if os.path.exists(REMINDER_LOG_PATH):
             os.remove(REMINDER_LOG_PATH)
-            print("🧹 Cleared reminder log for new month.")
+            print("🧹 Cleared reminder log for the new month.")
+        exit()  # Exit after reset
 
-    # On 24th, send reminder only if not uploaded and not already sent this hour
-    elif True:
-        if os.path.exists(EPF_FLAG_PATH):
-            print("✅ EPF already uploaded. Skipping reminders.")
+    # 📧 Send reminder on 24th if file not uploaded and not already sent for this hour
+    if current_day == 24:
+        uploaded = check_epf_uploaded()
+        if uploaded:
+            print("✅ EPF already uploaded. No reminder needed.")
+        elif current_hour in [9, 14, 18]:
+            if not already_sent_reminder(current_hour):
+                epf_reminder(SMTP_USER, SMTP_PASS)
+            else:
+                print(f"⏱ Reminder already sent for {current_hour}:00 today. Skipping.")
         else:
-            print("❗ FLAG FILE NOT FOUND")
-            uploaded = check_epf_uploaded()
-            if not uploaded and current_hour in [9, 14, 18]:
-                if not already_sent_reminder(current_hour):
-                    epf_reminder(SMTP_USER, SMTP_PASS)
-                else:
-                    print(f"⏱ Reminder already sent for {current_hour}:00 today. Skipping.")
-            elif not uploaded:
-                print(f"⏱ Not a scheduled reminder time: {current_hour}:00")
+            print(f"🕒 Current time {current_hour}:00 is not a reminder slot. Skipping.")
